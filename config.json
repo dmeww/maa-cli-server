@@ -1,0 +1,8 @@
+{
+  "quality": 60,
+  "webHook": {
+    "type": "console",
+    "url": "",
+    "token": ""
+  }
+}
