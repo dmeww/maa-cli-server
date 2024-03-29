@@ -1,0 +1,18 @@
+#!/usr/bin/sh
+
+adb_command="$*"
+
+# Check if "screencap" is present in the arguments
+
+if echo "$adb_command" | grep -q "screencap"; then
+
+  # If "screencap" is present, append "-d id" to the arguments
+
+  adb_command=$(echo "$adb_command" | sed 's/screencap/screencap -d display-id/')
+
+fi
+
+# Execute the actual adb command
+
+/usr/platform-tools/adb $adb_command
+# echo $adb_command
