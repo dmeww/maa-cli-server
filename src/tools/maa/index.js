@@ -82,6 +82,9 @@ class MAA {
     }
 
     loadTimerTasks() {
+        /**
+         * @param {Task[]} list
+         */
         let list = file.loadTimerTasks()
         list.forEach(async (task) => {
             let hour = task.time.split(':')[0]
