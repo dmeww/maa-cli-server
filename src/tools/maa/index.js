@@ -1,10 +1,10 @@
 const cp = require('child_process')
-const {WebSocketServer} = require("ws");
+const { WebSocketServer } = require("ws");
 const Timer = require('./timer')
 const file = require('../file')
 const configTool = require('../config')
 const Msg = require("./msg");
-const {onHook, Hook} = require('../hook')
+const { onHook, Hook } = require('../hook')
 const device = require('../device')
 const App = require('../app')
 
@@ -48,6 +48,8 @@ class MAA {
 
     constructor() {
         this.buildMaaLogServer()
+        let savedTimerTasks = file.loadTimerTasks()
+        this.timerMap = new Map(Object.entries(savedTimerTasks))
     }
 
     /**
@@ -76,6 +78,7 @@ class MAA {
             })
             this.timerMap.set(task.uuid, timer)
             timer.start()
+            file.saveTimerTasks(this.timerMap)
         })
     }
 
@@ -91,6 +94,8 @@ class MAA {
         } catch (e) {
             console.log('删除定时任务失败 :=> ' + e.message)
             return false
+        } finally {
+            file.saveTimerTasks(this.timerMap)
         }
         return true
     }
@@ -127,14 +132,18 @@ class MAA {
         this.broadcast(Msg.StatusInstance(this.status))
 
         const complete = () => {
-            this.status.running = false
+
             this.status.task = null
             this.status.len = this.taskQueue.length
             this.broadcast(Msg.StatusInstance(this.status))
             onHook(this.app.webHook, this.runLog)
             this.runLog = ''
             file.removeMaaTask(task.uuid)
-            device.closeDevice()
+            if (this.status.len === 0)
+                device.closeDevice()
+            this.status.running = false
+            setTimeout(() => { }, 3000);
+            this.broadcast(Msg.StatusInstance(this.status))
         }
 
         if (task === undefined) {
@@ -176,7 +185,7 @@ class MAA {
 
 
     buildMaaLogServer() {
-        this.wss = new WebSocketServer({noServer: true})
+        this.wss = new WebSocketServer({ noServer: true })
         this.wss.on('connection', (ws) => {
         })
     }

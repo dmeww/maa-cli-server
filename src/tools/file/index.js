@@ -90,6 +90,26 @@ const saveAppConfig = (config)=>{
     return true
 }
 
+const loadTimerTasks = ()=>{
+    try {
+        let resStr = fs.readFileSync(`${configTool.appPath()}/tasks.json`, 'utf8')
+        return JSON.parse(resStr)
+    } catch (e) {
+        console.log('读取定时任务配置失败 :=> ' + e.message)
+        return {}
+    }
+}
+
+const saveTimerTasks = (tasks) => {
+    try {
+        fs.writeFileSync(`${configTool.appPath()}/tasks.json`, JSON.stringify(tasks), 'utf8')
+    } catch (e) {
+        console.log('写入定时任务配置失败 :=> ' + e.message)
+        return false
+    }
+    return true
+}
+
 
 module.exports = {
     loadMaaConfig,
@@ -97,5 +117,7 @@ module.exports = {
     saveMaaTask,
     removeMaaTask,
     loadAppConfig,
-    saveAppConfig
+    saveAppConfig,
+    loadTimerTasks,
+    saveTimerTasks
 }
