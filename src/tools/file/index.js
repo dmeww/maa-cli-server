@@ -106,7 +106,10 @@ const loadTimerTasks = () => {
 
 const saveTimerTasks = (tasks = []) => {
     try {
-        fs.writeFileSync(`${configTool.appPath()}/tasks.json`, JSON.stringify(tasks), 'utf8')
+        if (tasks.length)
+            fs.writeFileSync(`${configTool.appPath()}/tasks.json`, JSON.stringify(tasks), 'utf8')
+        else
+            fs.writeFileSync(`${configTool.appPath()}/tasks.json`, '[]', 'utf8')
     } catch (e) {
         console.log('写入定时任务配置失败 :=> ' + e.message)
         return false
