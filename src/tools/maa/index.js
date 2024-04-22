@@ -48,8 +48,7 @@ class MAA {
 
     constructor() {
         this.buildMaaLogServer()
-        let savedTimerTasks = file.loadTimerTasks()
-        this.timerMap = new Map(Object.entries(savedTimerTasks))
+        this.loadTimerTasks()
     }
 
     /**
@@ -78,8 +77,25 @@ class MAA {
             })
             this.timerMap.set(task.uuid, timer)
             timer.start()
-            file.saveTimerTasks(this.timerMap)
+            this.saveTimerTasks()
         })
+    }
+
+    loadTimerTasks() {
+        let list = file.loadTimerTasks()
+        list.forEach(async (task) => {
+            let hour = task.time.split(':')[0]
+            let minute = task.time.split(':')[1]
+            await this.addTimerTask(task, hour, minute)
+        })
+    }
+
+    saveTimerTasks() {
+        let list = []
+        this.timerMap.forEach((timer, taskUUID) => {
+            list.push(timer.task)
+        })
+        file.saveTimerTasks(list)
     }
 
     /**

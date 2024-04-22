@@ -65,7 +65,7 @@ const removeMaaTask = (taskUUID) => {
     return true
 }
 
-const loadAppConfig = ()=>{
+const loadAppConfig = () => {
     try {
         let resStr = fs.readFileSync(configTool.configPath(), 'utf8')
         return JSON.parse(resStr)
@@ -80,7 +80,7 @@ const loadAppConfig = ()=>{
  * @param {App} config
  * @return {boolean}
  */
-const saveAppConfig = (config)=>{
+const saveAppConfig = (config) => {
     try {
         fs.writeFileSync(configTool.configPath(), JSON.stringify(config), 'utf8')
     } catch (e) {
@@ -90,17 +90,21 @@ const saveAppConfig = (config)=>{
     return true
 }
 
-const loadTimerTasks = ()=>{
+/**
+ * 
+ * @returns {Task[]}
+ */
+const loadTimerTasks = () => {
     try {
         let resStr = fs.readFileSync(`${configTool.appPath()}/tasks.json`, 'utf8')
         return JSON.parse(resStr)
     } catch (e) {
         console.log('读取定时任务配置失败 :=> ' + e.message)
-        return {}
+        return []
     }
 }
 
-const saveTimerTasks = (tasks) => {
+const saveTimerTasks = (tasks = []) => {
     try {
         fs.writeFileSync(`${configTool.appPath()}/tasks.json`, JSON.stringify(tasks), 'utf8')
     } catch (e) {
